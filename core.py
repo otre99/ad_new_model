@@ -14,7 +14,19 @@ class CubicEq:
         
     def set_p(self, p):
         self.p = p
+
+    def get_root(self, p):
+        self.p = p 
+        T = self.T
+        R = self.R
+        a, b = self.a, self.b 
         
+        c3 = p*sqrt(T)                    
+        c2 = -R*T**(3.0/2.0)
+        c1 = (a-R*T**(3.0/2.0)*b-p*b**2*sqrt(T))
+        c0 = -a*b
+        return select_valid_root(np.roots([c3, c2, c1, c0]))         
+                
     def obj_funct(self, v):
         p = self.p
         T = self.T 
@@ -41,15 +53,9 @@ class YCurve:
         self.b = 0.08664*self.R*TC/PC
         self.T = T        
 
-    def cubicEq(self, v):
-        p = self.p
-        T = self.T 
-        R = self.R 
-        a = self.a
-        b = self.b 
-        
-        return p*np.sqrt(T)*v**3-R*T**(3.0/2)*v**2+(a-R*T**(3/2)*b-p*b**2*np.sqrt(T))*v-a*b
-
+    def getCubicEq(self):
+        cubic = CubicEq(T=self.T, R=self.R, a=self.a, b=self.b)
+        return cubic
 
     def findRoot(self):
         T = self.T
@@ -61,16 +67,16 @@ class YCurve:
             for i in range(v.size):
                 p = self.p[i]
                 c3 = p*sqrt(T)                    
-                c2 = -R*T**(3.0/2)
-                c1 = (a-R*T**(3/2)*b-p*b**2*sqrt(T))
+                c2 = -R*T**(3.0/2.0)
+                c1 = (a-R*T**(3.0/2.0)*b-p*b**2*sqrt(T))
                 c0 = -a*b
                 v[i] = select_valid_root(np.roots([c3, c2, c1, c0])) 
             return v        
         else:
             p = self.p
             c3 = p*sqrt(T)                    
-            c2 = -R*T**(3.0/2)
-            c1 = (a-R*T**(3/2)*b-p*b**2*sqrt(T))
+            c2 = -R*T**(3.0/2.0)
+            c1 = (a-R*T**(3.0/2.0)*b-p*b**2*sqrt(T))
             c0 = -a*b
             return select_valid_root(np.roots([c3, c2, c1, c0])) 
 

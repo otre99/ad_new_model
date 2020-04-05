@@ -26,7 +26,6 @@ if __name__ == "__main__":
     parser.add_argument("--tc", help="Critical temperature [K]", type=float, default=32.979999)
     parser.add_argument("--temp", help="Temperature [K]", type=float, default=75.0)    
 
-    
 
     parser.add_argument("--n0",  help="n0 (Starting Value)", type=float, default=3.728490)
     parser.add_argument("--q",   help="q (Starting Value)", type=float, default=0.010016)
