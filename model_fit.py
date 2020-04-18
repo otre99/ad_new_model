@@ -17,6 +17,15 @@ plt.rcParams["axes.spines.top"] = False
 plt.rcParams["axes.spines.right"] = False
 
 if __name__ == "__main__":
+    from math import isinf
+
+    def inside_range(a,b, x, vname):
+        if not a<x<b:
+            print("Warning: Initial value for parameter `{}` " 
+                  "must be in ({},{}), however you set {}={}".format(vname, a,b,vname,x))
+            return False
+        return True 
+
     parser = argparse.ArgumentParser()
     parser.add_argument("data_file", help="Experimental data")
     parser.add_argument("--xsf", help="Scale factor for x experimental data", type=float, default=1.0)
@@ -49,8 +58,30 @@ if __name__ == "__main__":
     yn*=FLAGS.ysf
         
     if FLAGS.fit:
-        yp0, results = curve_fit(model.curve, xn, yn, p0=[n0, q, n, vad])
-        n0, q, n, vad = yp0
+        n0Min = -np.inf
+        n0Max = +np.inf 
+        f1 = inside_range(n0Min, n0Max,n0,"n0")
+
+        qMin = -np.inf
+        qMax = +np.inf 
+        f2 = inside_range(qMin, qMax,n0,"q")
+        
+        nMin = -np.inf 
+        nMax = +np.inf 
+        f3 = inside_range(nMin, nMax,n,"n")
+        
+        vadMin = -np.inf
+        vadMax = +np.inf
+        f4 = inside_range(vadMin, vadMax,vad,"vad")
+        
+        # ensure a feasible staring point         
+        if f1&f2&f3&f4:        
+            bounds = ([n0Min, qMin, nMin, vadMin], [n0Max, qMax, nMax, vadMax])
+            yp0, results = curve_fit(model.curve, xn, yn, 
+                                 p0=[n0, q, n, vad], bounds=bounds)
+            n0, q, n, vad = yp0
+        else:
+            print("Error. Not fitted was done!!")
     
     xx = np.linspace(xn.min(), xn.max(), 12000)    
     yy = model.curve(xx, n0=n0, q=q, n=n, vad=vad)
